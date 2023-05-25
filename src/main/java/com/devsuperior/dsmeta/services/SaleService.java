@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,7 +58,23 @@ public class SaleService {
         List<ReportProjection> result = repository.search2(LocalDate.parse(minDate), LocalDate.parse(maxDate), name);
         List<ReportDTO> reports = result.stream().map(ReportDTO::new).toList();
 
-        Page<ReportDTO> reportPage = new PageImpl<>(reports, pageable, pageable.getPageNumber());
+
+        int totalReports = reports.size();
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+
+        List<ReportDTO> pagedReports;
+
+        if (reports.size() < startItem) {
+            pagedReports = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + pageSize, reports.size());
+            pagedReports = reports.subList(startItem, toIndex);
+        }
+
+        Page<ReportDTO> reportPage = new PageImpl<>(pagedReports, pageable, totalReports);
+
 
         return reportPage;
 
