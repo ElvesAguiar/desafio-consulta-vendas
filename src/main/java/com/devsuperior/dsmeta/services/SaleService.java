@@ -24,6 +24,8 @@ import java.util.Optional;
 @Service
 public class SaleService {
 
+    public static final LocalDate today = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
+
     @Autowired
     private SaleRepository repository;
 
@@ -33,23 +35,8 @@ public class SaleService {
         return new SaleMinDTO(entity);
     }
 
-    public List<SummaryDTO> getSummary(String minDate, String maxDate) {
-        LocalDate today = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
-
-        minDate = minDate.isEmpty() ? today.minusYears(1L).toString() : minDate;
-
-        maxDate = maxDate.isEmpty() ? today.toString() : maxDate;
-
-        List<SummaryProjection> result = repository.search1(LocalDate.parse(minDate), LocalDate.parse(maxDate));
-
-        List<SummaryDTO> summarys = result.stream().map(SummaryDTO::new).toList();
-
-
-        return summarys;
-    }
 
     public Page<ReportDTO> getReport(String minDate, String maxDate, String name, Pageable pageable) {
-        LocalDate today = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
 
         minDate = minDate.isEmpty() ? today.minusYears(1L).toString() : minDate;
 
@@ -73,10 +60,17 @@ public class SaleService {
             pagedReports = reports.subList(startItem, toIndex);
         }
 
-        Page<ReportDTO> reportPage = new PageImpl<>(pagedReports, pageable, totalReports);
+        return new PageImpl<>(pagedReports, pageable, totalReports);
 
+    }
+    public List<SummaryDTO> getSummary(String minDate, String maxDate) {
 
-        return reportPage;
+        minDate = minDate.isEmpty() ? today.minusYears(1L).toString() : minDate;
 
+        maxDate = maxDate.isEmpty() ? today.toString() : maxDate;
+
+        List<SummaryProjection> result = repository.search1(LocalDate.parse(minDate), LocalDate.parse(maxDate));
+
+        return result.stream().map(SummaryDTO::new).toList();
     }
 }
