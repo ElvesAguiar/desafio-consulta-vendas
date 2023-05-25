@@ -30,6 +30,7 @@ public class ReportDTO {
         sellerName = projection.getSellerName();
     }
 
+
     public Long getId() {
         return id;
     }

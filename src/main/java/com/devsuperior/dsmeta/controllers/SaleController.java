@@ -1,20 +1,15 @@
 package com.devsuperior.dsmeta.controllers;
 
 import com.devsuperior.dsmeta.dto.ReportDTO;
+import com.devsuperior.dsmeta.dto.SaleMinDTO;
 import com.devsuperior.dsmeta.dto.SummaryDTO;
-import com.devsuperior.dsmeta.projections.SummaryProjection;
-import com.devsuperior.dsmeta.repositories.SaleRepository;
+import com.devsuperior.dsmeta.services.SaleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
-import com.devsuperior.dsmeta.dto.SaleMinDTO;
-import com.devsuperior.dsmeta.services.SaleService;
-
-import javax.swing.*;
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -32,17 +27,17 @@ public class SaleController {
 	}
 
 	@GetMapping(value = "/report")
-	public List<ReportDTO> getReport(@RequestParam(name = "minDate", defaultValue = "") String minDate,
+	public ResponseEntity<Page<ReportDTO>> getReport(@RequestParam(name = "minDate", defaultValue = "") String minDate,
 									 @RequestParam(name = "maxDate", defaultValue = "") String maxDate,
-									 @RequestParam(name="name",defaultValue = "") String name) {
+									 @RequestParam(name="name",defaultValue = "") String name, Pageable pageable) {
 
-		return service.getReport(minDate,maxDate,name);
+		return ResponseEntity.ok( service.getReport(minDate,maxDate,name,pageable));
 	}
 
 	@GetMapping(value = "/summary")
-	public List<SummaryDTO> getSummary(@RequestParam(name = "minDate", defaultValue = "") String minDate,
+	public ResponseEntity<List<SummaryDTO>> getSummary(@RequestParam(name = "minDate", defaultValue = "") String minDate,
 									   @RequestParam(name = "maxDate", defaultValue = "") String maxDate) {
 
-		return service.getSummary(minDate,maxDate);
+		return ResponseEntity.ok(service.getSummary(minDate,maxDate));
 	}
 }
