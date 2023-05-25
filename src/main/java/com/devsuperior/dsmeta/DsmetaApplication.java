@@ -1,5 +1,6 @@
 package com.devsuperior.dsmeta;
 
+import com.devsuperior.dsmeta.dto.ReportDTO;
 import com.devsuperior.dsmeta.dto.SummaryDTO;
 import com.devsuperior.dsmeta.projections.SummaryProjection;
 import com.devsuperior.dsmeta.repositories.SaleRepository;
@@ -16,19 +17,30 @@ import java.util.List;
 @SpringBootApplication
 public class DsmetaApplication implements CommandLineRunner {
 
-	@Autowired
-	SaleRepository repository;
-	public static void main(String[] args) {
-		SpringApplication.run(DsmetaApplication.class, args);
-	}
+    @Autowired
+    SaleRepository repository;
 
-	@Override
-	public void run(String... args) throws Exception {
-				List<SummaryProjection> list =
-				repository.search1(LocalDate.parse("2022-01-01"),LocalDate.parse("2022-06-30"));
-				List<SummaryDTO> result = list.stream().map(x -> new SummaryDTO(x)).toList();
-				for (SummaryDTO obj : result){
-					System.out.println(obj);
-				}
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(DsmetaApplication.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        List<SummaryDTO> summarys =
+                repository.search1(LocalDate.parse("2022-01-01"), LocalDate.parse("2022-06-30"))
+                        .stream().map(SummaryDTO::new).toList();
+
+        summarys.forEach(System.out::println);
+
+        List<ReportDTO> reports =
+                repository.search2(LocalDate.parse("2022-05-01"), LocalDate.parse("2022-05-31"),"odinson")
+                        .stream().map(ReportDTO::new).toList();
+
+        summarys.forEach(System.out::println);
+
+        System.out.println("\n\n\n");
+
+        reports.forEach(System.out::println);
+
+    }
 }

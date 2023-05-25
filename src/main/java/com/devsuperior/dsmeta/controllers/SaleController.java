@@ -1,5 +1,6 @@
 package com.devsuperior.dsmeta.controllers;
 
+import com.devsuperior.dsmeta.dto.ReportDTO;
 import com.devsuperior.dsmeta.dto.SummaryDTO;
 import com.devsuperior.dsmeta.projections.SummaryProjection;
 import com.devsuperior.dsmeta.repositories.SaleRepository;
@@ -20,8 +21,6 @@ import java.util.List;
 @RequestMapping(value = "/sales")
 public class SaleController {
 
-	@Autowired
-	SaleRepository repository;
 
 	@Autowired
 	private SaleService service;
@@ -33,16 +32,17 @@ public class SaleController {
 	}
 
 	@GetMapping(value = "/report")
-	public ResponseEntity<?> getReport() {
-		// TODO
-		return null;
+	public List<ReportDTO> getReport(@RequestParam(name = "minDate", defaultValue = "") String minDate,
+									 @RequestParam(name = "maxDate", defaultValue = "") String maxDate,
+									 @RequestParam(name="name",defaultValue = "") String name) {
+
+		return service.getReport(minDate,maxDate,name);
 	}
 
 	@GetMapping(value = "/summary")
 	public List<SummaryDTO> getSummary(@RequestParam(name = "minDate", defaultValue = "") String minDate,
 									   @RequestParam(name = "maxDate", defaultValue = "") String maxDate) {
 
-		List<SummaryDTO> result = service.getSummary(minDate,maxDate);
-		return result;
+		return service.getSummary(minDate,maxDate);
 	}
 }
